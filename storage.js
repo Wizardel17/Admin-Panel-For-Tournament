@@ -1,4 +1,4 @@
-import { generateId, checkEmpty, checkString, checkObject } from "./utils";
+import { generateId, checkEmpty, checkString, checkObject } from "./utils.js";
 
 // Сохраняем
 
