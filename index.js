@@ -1,4 +1,4 @@
-import { createObject, saveCountry } from "./storage.js";
+import { createObject, saveCountry, getStorageCountry } from "./storage.js";
 import { checkString, checkEmpty } from "./utils.js";
 
 //  Что то получаем
@@ -6,6 +6,7 @@ import { checkString, checkEmpty } from "./utils.js";
 const getSectionTeam = document.querySelector('.team')
 const getForm = getSectionTeam.querySelector('.team__createTeam')
 const getSearchCountry = getSectionTeam.querySelector('.team__searchCountry')
+const getSelect = getSearchCountry.querySelector('select')
 
 //  Обработчики событий
 
@@ -24,6 +25,12 @@ getForm.addEventListener('submit', (e) => {
     getChildrenForm[1].value = ''
 })
 
+document.addEventListener('DOMContentLoaded', () => {
+    loadCountries()
+})
+
+//  Функции
+
 function addCountryOption(country) {
     checkEmpty(country)
     checkString(country)
@@ -33,6 +40,13 @@ function addCountryOption(country) {
         return
     }
 
-    const getSelect = getSearchCountry.querySelector('select')
     getSelect.innerHTML += `<option value='${country}'>${country}</option>`
+}
+
+function loadCountries() {
+    const arrayCountries = getStorageCountry()
+
+    for (let country of arrayCountries) {
+        getSelect.innerHTML += `<option value='${country}'>${country}</option>`
+    }
 }
