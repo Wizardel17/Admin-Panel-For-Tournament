@@ -8,7 +8,7 @@
 </head>
 <body>
     <section class="dashboard">
-        <h2 class="dashboard__title">Dashboard</h2>
+        <h2 class="dashboard__title">О турнире</h2>
 
         <div class="dashboard__statisctics">
             <div class="dashboard__statisctics__teams">Общее кол-во команд:</div>
@@ -19,6 +19,38 @@
 
         <div class="dashboard__futureMatches"></div>
 
+    </section>
+
+    <section class="team">
+        <h2>Создать команду</h2>
+
+        <form action="" class="team__createTeam">
+            <input type="text" placeholder="Введите название команды">
+            <input type="text" placeholder="Введите кол-во игроков">
+            <input type="text" placeholder="Введите страну команды">
+            <button class="button team__createTeam__button">Создать команду</button>
+        </form>
+
+        <h2>Фильтры</h2>
+
+        <div class="team__searchCountry">
+            <div class="team__searchCountry">По странам</div>
+            <select></select>
+            <button class="button team__searchCountry__button">Применить</button>
+        </div>
+
+        <div class="team__searchDifferent">
+            <div class="team__searchDifferent">Различное</div>
+            <select>
+                <option value="a-z">С начала алфавита</option>
+                <option value="z-a">С конца алфавита</option>
+                <option value="pointsful">С начала таблицы (по очкам)</option>
+                <option value="pointsless">С конца таблицы (по очкам)</option>
+                <option value="playerful">С начала таблицы (по игрокам)</option>
+                <option value="playerles">С конца таблицы (по игрокам)</option>
+            </select>
+            <button class="button team__searchDifferent__button">Применить</button>
+        </div>
     </section>
 </body>
 </html>
