@@ -7,7 +7,7 @@ const getForm = getSectionTeam.querySelector('.team__createTeam')
 
 //  Обработчики событий
 
-getForm.addEventListener('submit', (e) => {
+getForm.addEventListener('click', (e) => {
     const getChildrenForm = getForm.children
 
     const teamName = getChildrenForm[0].value
@@ -16,4 +16,7 @@ getForm.addEventListener('submit', (e) => {
     if (e.target.classList.contains('button')) {
         createObject(teamName, teamCountry)
     }
+
+    getChildrenForm[0].value = ''
+    getChildrenForm[1].value = ''
 })
