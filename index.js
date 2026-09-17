@@ -7,7 +7,9 @@ const getForm = getSectionTeam.querySelector('.team__createTeam')
 
 //  Обработчики событий
 
-getForm.addEventListener('click', (e) => {
+getForm.addEventListener('submit', (e) => {
+    e.preventDefault()
+
     const getChildrenForm = getForm.children
 
     const teamName = getChildrenForm[0].value

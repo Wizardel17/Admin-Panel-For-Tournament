@@ -6,7 +6,7 @@ const tasks = []
 
 //  Функции
 
-function createObject(team, country) {
+export function createObject(team, country) {
     checkEmpty(team)
     checkEmpty(country)
     checkString(team)
