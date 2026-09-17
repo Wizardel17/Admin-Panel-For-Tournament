@@ -15,9 +15,7 @@ getForm.addEventListener('submit', (e) => {
     const teamName = getChildrenForm[0].value
     const teamCountry = getChildrenForm[1].value
 
-    if (e.target.classList.contains('button')) {
-        createObject(teamName, teamCountry)
-    }
+    createObject(teamName, teamCountry)
 
     getChildrenForm[0].value = ''
     getChildrenForm[1].value = ''

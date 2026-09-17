@@ -1,7 +1,7 @@
 //  Функции
 
 export function generateId() {
-    return `#${Math.floor(Math.random() * 100)-Math.floor(Math.random() * 100)}`
+    return `#${Math.floor(Math.random() * 100)}-${Math.floor(Math.random() * 100)}`
 }
 
 export function checkString(string) {
