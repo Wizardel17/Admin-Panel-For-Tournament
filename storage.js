@@ -26,6 +26,12 @@ export function createObject(team, country) {
 function saveStorage(object) {
     checkObject(object)
 
+    const getStorage = JSON.parse(localStorage.getItem('teams'))
+
+    if (!(getStorage)) {
+        getStorage = localStorage.getItem('teams', JSON.stringify(tasks))
+    }
+
     tasks.unshift(object)
-    localStorage.setItem('teams', JSON.stringify(object))
+    localStorage.setItem('teams', JSON.stringify(tasks))
 }
