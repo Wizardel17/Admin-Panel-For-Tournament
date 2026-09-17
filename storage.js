@@ -27,3 +27,18 @@ function saveStorage(object) {
     getStorage.unshift(object)
     localStorage.setItem('teams', JSON.stringify(getStorage))
 }
+
+export function saveCountry(country) {
+    checkEmpty(country)
+    checkString(country)
+
+    let getStorage = JSON.parse(localStorage.getItem('countries')) || []
+
+    if (getStorage.includes(country)) {
+        return false
+    } else {
+        getStorage.unshift(country)
+        localStorage.setItem('countries', JSON.stringify(getStorage))
+        return true
+    }
+}
