@@ -32,7 +32,7 @@ export function saveCountry(country) {
     checkEmpty(country)
     checkString(country)
 
-    let getStorage = JSON.parse(localStorage.getItem('countries'))
+    let getStorage = JSON.parse(localStorage.getItem('countries')) || []
 
     if (getStorage.includes(country)) {
         return false
@@ -44,11 +44,21 @@ export function saveCountry(country) {
 }
 
 export function getStorageCountry() {
-    let getStorage = JSON.parse(localStorage.getItem('countries')) || []
+    let getStorage = JSON.parse(localStorage.getItem('countries'))
 
     if (!(getStorage)) {
         localStorage.setItem('countries', JSON.stringify([]))
     }
 
     return JSON.parse(localStorage.getItem('countries'))
+}
+
+export function getStorageTeams() {
+     let getStorage = JSON.parse(localStorage.getItem('teams'))
+
+    if (!(getStorage)) {
+        localStorage.setItem('teams', JSON.stringify([]))
+    }
+
+    return JSON.parse(localStorage.getItem('teams'))
 }
