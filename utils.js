@@ -17,7 +17,7 @@ export function checkEmpty(string) {
 }
 
 export function checkObject(object) {
-    if (typeof object !== 'object') {
+    if (typeof object !== 'object' || Array.isArray(object) || object === null) {
         throw Error('It is not an object')
     }
 }
