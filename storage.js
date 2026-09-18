@@ -24,6 +24,12 @@ function saveStorage(object) {
 
     let getStorage = JSON.parse(localStorage.getItem('teams')) || []
 
+    const teams = getStorage.map(item => item.team)
+
+    if (teams.includes(object.team)) {
+        throw Error(`${object.team} already have in the storage`)
+    }
+
     getStorage.unshift(object)
     localStorage.setItem('teams', JSON.stringify(getStorage))
 }
@@ -43,22 +49,27 @@ export function saveCountry(country) {
     }
 }
 
-export function getStorageCountry() {
-    let getStorage = JSON.parse(localStorage.getItem('countries'))
+export function saveUpcomingMatches(object) {
+    checkObject(object)
 
-    if (!(getStorage)) {
-        localStorage.setItem('countries', JSON.stringify([]))
-    }
+    let getStorage = JSON.parse(localStorage.getItem('upcoming')) || []
 
-    return JSON.parse(localStorage.getItem('countries'))
+    getStorage.unshift(object)
+    localStorage.setItem('upcoming', JSON.stringify(getStorage))
 }
 
-export function getStorageTeams() {
-     let getStorage = JSON.parse(localStorage.getItem('teams'))
+export function getAnyStorage(string) {
+    const availableStorage = ['teams', 'countries', 'upcoming']
 
-    if (!(getStorage)) {
-        localStorage.setItem('teams', JSON.stringify([]))
+    if (!(availableStorage.includes(string))) {
+        throw Error('Storage blocked')
     }
 
-    return JSON.parse(localStorage.getItem('teams'))
+    let getStorage = JSON.parse(localStorage.getItem(string))
+
+    if (!(getStorage)) {
+        localStorage.setItem(string, JSON.stringify([]))
+    }
+
+    return JSON.parse(localStorage.getItem(string))
 }
