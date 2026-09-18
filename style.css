@@ -17,3 +17,10 @@ body {
 .team__createTeam {
     padding-bottom: 20px
 }
+
+.match {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
