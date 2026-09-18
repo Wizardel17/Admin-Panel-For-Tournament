@@ -43,6 +43,35 @@ getFormMatches.addEventListener('submit', (e) => {
     getChildrenForm[1].value = ''
 })
 
+getContainerNewMacthes.addEventListener('click', (e) => {
+    const findParent = e.target.parentElement
+    const getChildren = findParent.children
+    const team1 = getChildren[0].textContent
+    const team2 = getChildren[2].textContent
+
+    if (e.target.classList.contains('match__button')) {
+        
+        findParent.innerHTML = 
+            `<div class='team'>${team1}</div>
+            <select>
+                <option value="0 - 3">0 - 3</option>
+                <option value="3 - 0">3 - 0</option>
+                <option value="1 - 3">1 - 3</option>
+                <option value="3 - 1">3 - 1</option>
+                <option value="2 - 3">2 - 3</option>
+                <option value="3 - 2">3 - 2</option>
+            </select>
+            <div class='team'>${team2}</div>
+            <button class='match__agree'>Подтвердить</button>`
+    }
+
+    if (e.target.classList.contains('match__agree')) {
+        const findParent2 = e.target.parentElement
+        const getChildren2 = findParent2.children
+        
+    }
+})
+
 document.addEventListener('DOMContentLoaded', () => {
     loadCountries()
     loadUpcomingMatches()
@@ -87,6 +116,7 @@ function loadUpcomingMatches() {
                 <div class='team'>${match.team1}</div>
                 <div class='score'>${match.score}</div>
                 <div class='team'>${match.team2}</div>
+                <button class='match__button'>Выставить счет'</button>
             </div>`
     }
 }
