@@ -59,7 +59,7 @@ export function saveUpcomingMatches(object) {
 }
 
 export function getAnyStorage(string) {
-    const availableStorage = ['teams', 'countries', 'upcoming']
+    const availableStorage = ['teams', 'countries', 'upcoming', 'finished']
 
     if (!(availableStorage.includes(string))) {
         throw Error('Storage blocked')
@@ -72,4 +72,14 @@ export function getAnyStorage(string) {
     }
 
     return JSON.parse(localStorage.getItem(string))
+}
+
+export function deleteUpcomingMatches(array) {
+    let getStorage = JSON.parse(localStorage.getItem('upcoming'))
+    const findTeams = getStorage.map(item => [item.team1, item.team2])
+    const index = findTeams.findIndex(team => team[0] === array[0] && team[1] === array[1])
+
+    getStorage.splice(index, 1)
+    
+    localStorage.setItem('upcoming', JSON.stringify(getStorage))
 }
