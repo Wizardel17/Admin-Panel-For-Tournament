@@ -21,3 +21,9 @@ export function checkObject(object) {
         throw Error('It is not an object')
     }
 }
+
+export function checkArray(array) {
+    if (!(Array.isArray(array))) {
+        throw Error('It is not an array')
+    }
+}
