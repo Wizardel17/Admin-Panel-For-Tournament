@@ -1,4 +1,4 @@
-import { createObject, saveCountry, getAnyStorage, saveUpcomingMatches} from "./storage.js";
+import { createObject, saveCountry, getAnyStorage, saveUpcomingMatches, deleteUpcomingMatches, saveFinishedMatches} from "./storage.js";
 import { checkString, checkEmpty } from "./utils.js";
 
 //  Что то получаем
@@ -10,7 +10,8 @@ const getSelect = getSearchCountry.querySelector('select')
 
 const getSectionMatches = document.querySelector('.matches')
 const getFormMatches = getSectionMatches.querySelector('.matches__form')
-const getContainerNewMacthes = getSectionMatches.querySelector('.matches__newMatches')
+const getContainerNewMatches = getSectionMatches.querySelector('.matches__newMatches')
+const getContainerOldMatches = getSectionMatches.querySelector('.matches__oldMatches')
 
 //  Обработчики событий
 
@@ -43,11 +44,13 @@ getFormMatches.addEventListener('submit', (e) => {
     getChildrenForm[1].value = ''
 })
 
-getContainerNewMacthes.addEventListener('click', (e) => {
+getContainerNewMatches.addEventListener('click', (e) => {
     const findParent = e.target.parentElement
     const getChildren = findParent.children
     const team1 = getChildren[0].textContent
     const team2 = getChildren[2].textContent
+
+    const matchObject = [team1, team2]
 
     if (e.target.classList.contains('match__button')) {
         
@@ -62,19 +65,35 @@ getContainerNewMacthes.addEventListener('click', (e) => {
                 <option value="3 - 2">3 - 2</option>
             </select>
             <div class='team'>${team2}</div>
-            <button class='match__agree'>Подтвердить</button>`
+            <button class='match__agree'>Подтвердить</button>
+            <button class='match__disagree'>Отменить</button>`
     }
 
     if (e.target.classList.contains('match__agree')) {
-        const findParent2 = e.target.parentElement
-        const getChildren2 = findParent2.children
-        
+        const score = getChildren[1].value
+        const finishedMatchObject = {team1, team2, score}
+        findParent.innerHTML = 
+            `<div class='team'>${team1}</div>
+            <div class='score'>score</div>
+            <div class='team'>${team2}</div>`
+        getContainerOldMatches.append(findParent)
+        deleteUpcomingMatches(matchObject)
+        saveFinishedMatches(finishedMatchObject)
+    }
+
+    if (e.target.classList.contains('match__disagree')) {
+        findParent.innerHTML = 
+            `<div class='team'>${team1}</div>
+            <div class='score'>0 - 0</div>
+            <div class='team'>${team2}</div>
+            <button class='match__button'>Выставить счет</button>`
     }
 })
 
 document.addEventListener('DOMContentLoaded', () => {
     loadCountries()
     loadUpcomingMatches()
+    loadFinishedMatches()
 })
 
 //  Функции
@@ -103,20 +122,45 @@ function loadCountries() {
     }
 }
 
-function loadUpcomingMatches() {
-    const arrayUpcoming = getAnyStorage('upcoming')
+function getStorages(string) {
+    const availableStorages = ['upcoming', 'finished']
 
-    if (!(arrayUpcoming)) {
+    if (!(availableStorages.includes(string))) {
+        throw Error('Storage blocked')
+    }
+    
+    const storageArray = getAnyStorage(string)
+
+    if (!(storageArray)) {
         return
     }
 
+    return storageArray
+}
+
+function loadUpcomingMatches() {
+    const arrayUpcoming = getStorages('upcoming')
+
     for (let match of arrayUpcoming) {
-        getContainerNewMacthes.innerHTML += 
+        getContainerNewMatches.innerHTML += 
             `<div class='match'>
                 <div class='team'>${match.team1}</div>
                 <div class='score'>${match.score}</div>
                 <div class='team'>${match.team2}</div>
-                <button class='match__button'>Выставить счет'</button>
+                <button class='match__button'>Выставить счет</button>
+            </div>`
+    }
+}
+
+function loadFinishedMatches() {
+    const arrayFinished = getStorages('finished')
+
+    for (let match of arrayFinished) {
+        getContainerOldMatches.innerHTML += 
+            `<div class='match'>
+                <div class='team'>${match.team1}</div>
+                <div class='score'>${match.score}</div>
+                <div class='team'>${match.team2}</div>
             </div>`
     }
 }
@@ -146,11 +190,12 @@ function createNewMatches(team1, team2) {
         team1, team2, score: '0 - 0'
     }
 
-    getContainerNewMacthes.innerHTML += 
+    getContainerNewMatches.innerHTML += 
         `<div class='match'>
             <div class='team'>${matchObject.team1}</div>
             <div class='score'>${matchObject.score}</div>
             <div class='team'>${matchObject.team2}</div>
+            <button class='match__button'>Выставить счет</button>
         </div>`
 
     saveUpcomingMatches(matchObject)
