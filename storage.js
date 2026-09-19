@@ -1,4 +1,4 @@
-import { generateId, checkEmpty, checkString, checkObject } from "./utils.js";
+import { generateId, checkEmpty, checkString, checkObject, checkArray } from "./utils.js";
 
 //  Функции
 
@@ -58,6 +58,15 @@ export function saveUpcomingMatches(object) {
     localStorage.setItem('upcoming', JSON.stringify(getStorage))
 }
 
+export function saveFinishedMatches(object) {
+    checkObject(object)
+
+    let getStorage = JSON.parse(localStorage.getItem('finished')) || []
+
+    getStorage.unshift(object)
+    localStorage.setItem('finished', JSON.stringify(getStorage))
+}
+
 export function getAnyStorage(string) {
     const availableStorage = ['teams', 'countries', 'upcoming', 'finished']
 
@@ -75,6 +84,8 @@ export function getAnyStorage(string) {
 }
 
 export function deleteUpcomingMatches(array) {
+    checkArray(array)
+
     let getStorage = JSON.parse(localStorage.getItem('upcoming'))
     const findTeams = getStorage.map(item => [item.team1, item.team2])
     const index = findTeams.findIndex(team => team[0] === array[0] && team[1] === array[1])
