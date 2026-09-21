@@ -5,6 +5,7 @@ import { checkString, checkEmpty } from "./utils.js";
 
 const getDashboard = document.querySelector('.dashboard')
 const getStatistics = getDashboard.querySelector('.dashboard__statistics')
+const getFutureMatches = getDashboard.querySelector('.dashboard__futureMatches')
 
 const getSectionTeam = document.querySelector('.team')
 const getFormTeam = getSectionTeam.querySelector('.team__createTeam')
@@ -103,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCountries()
     loadUpcomingMatches()
     loadFinishedMatches()
+    loadUpcomingInDashboard()
 
     calculateTeams()
     calculateMatches()
@@ -248,4 +250,17 @@ function calculateUpcomingMatches() {
     const getUpcomingLength = getUpcoming.length
 
     getBlock.innerHTML = `Кол-во будущих матчей: ${getUpcomingLength}`
+}
+
+function loadUpcomingInDashboard() {
+    const getUpcomingMatches = getAnyStorage('upcoming')
+
+    for (let match of getUpcomingMatches) {
+        getFutureMatches.innerHTML += 
+            `<div class='match'>
+                <div class='team'>${match.team1}</div>
+                <div class='score'>${match.score}</div>
+                <div class='team'>${match.team2}</div>
+            </div>`
+    }
 }
