@@ -43,6 +43,7 @@ getFormMatches.addEventListener('submit', (e) => {
     const teamName2 = getChildrenForm[1].value.toUpperCase().trim()
 
     createNewMatches(teamName1, teamName2)
+    calculateUpcomingMatches()
     calculateMatches()
 
     getChildrenForm[0].value = ''
@@ -106,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateTeams()
     calculateMatches()
     calculateFinishedMatches()
+    calculateUpcomingMatches()
 })
 
 //  Функции
@@ -238,4 +240,12 @@ function calculateFinishedMatches() {
     const getFinishedLength = getFinished.length
 
     getBlock.innerHTML = `Кол-во законченных матчей: ${getFinishedLength}`
+}
+
+function calculateUpcomingMatches() {
+    const getBlock = getStatistics.querySelector('.dashboard__statistics__futureMatches')
+    const getUpcoming = getAnyStorage('upcoming')
+    const getUpcomingLength = getUpcoming.length
+
+    getBlock.innerHTML = `Кол-во будущих матчей: ${getUpcomingLength}`
 }
