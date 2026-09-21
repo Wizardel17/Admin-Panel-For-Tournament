@@ -77,13 +77,16 @@ getContainerNewMatches.addEventListener('click', (e) => {
     if (e.target.classList.contains('match__agree')) {
         const score = getChildren[1].value
         const finishedMatchObject = {team1, team2, score}
+
         findParent.innerHTML = 
             `<div class='team'>${team1}</div>
-            <div class='score'>score</div>
+            <div class='score'>${score}</div>
             <div class='team'>${team2}</div>`
+
         getContainerOldMatches.append(findParent)
         deleteUpcomingMatches(matchObject)
         saveFinishedMatches(finishedMatchObject)
+        calculateFinishedMatches()
     }
 
     if (e.target.classList.contains('match__disagree')) {
@@ -102,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     calculateTeams()
     calculateMatches()
+    calculateFinishedMatches()
 })
 
 //  Функции
@@ -226,4 +230,12 @@ function calculateMatches() {
     const getMatchesLength = getUpcoming.length + getFinished.length
 
     getBlock.innerHTML = `Общее кол-во матчей: ${getMatchesLength}`
+}
+
+function calculateFinishedMatches() {
+    const getBlock = getStatistics.querySelector('.dashboard__statistics__finishedMatches')
+    const getFinished = getAnyStorage('finished')
+    const getFinishedLength = getFinished.length
+
+    getBlock.innerHTML = `Кол-во законченных матчей: ${getFinishedLength}`
 }
