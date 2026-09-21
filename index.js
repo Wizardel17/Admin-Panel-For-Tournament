@@ -3,6 +3,9 @@ import { checkString, checkEmpty } from "./utils.js";
 
 //  Что то получаем
 
+const getDashboard = document.querySelector('.dashboard')
+const getStatistics = getDashboard.querySelector('.dashboard__statistics')
+
 const getSectionTeam = document.querySelector('.team')
 const getFormTeam = getSectionTeam.querySelector('.team__createTeam')
 const getSearchCountry = getSectionTeam.querySelector('.team__searchCountry')
@@ -25,6 +28,7 @@ getFormTeam.addEventListener('submit', (e) => {
 
     createObject(teamName, teamCountry)
     addCountryOption(teamCountry)
+    calculateTeams()
 
     getChildrenForm[0].value = ''
     getChildrenForm[1].value = ''
@@ -94,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCountries()
     loadUpcomingMatches()
     loadFinishedMatches()
+
+    calculateTeams()
 })
 
 //  Функции
@@ -199,4 +205,13 @@ function createNewMatches(team1, team2) {
         </div>`
 
     saveUpcomingMatches(matchObject)
+}
+
+
+function calculateTeams() {
+    const getBlock = getStatistics.querySelector('.dashboard__statistics__teams')
+    const getTeams = getAnyStorage('teams')
+    const getTeamsLength = getTeams.length
+
+    getBlock.innerHTML = `Общее кол-во команд: ${getTeamsLength}`
 }
