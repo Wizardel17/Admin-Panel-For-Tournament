@@ -14,9 +14,16 @@ export function createObject(team, country) {
         players: 3,
         country,
         points: 0,
+        matches: []
     }
 
     saveStorage(teamObject)
+}
+
+export function saveTeamStorages(array) {
+    checkArray(array)
+
+    localStorage.setItem('teams', JSON.stringify(array))
 }
 
 function saveStorage(object) {
