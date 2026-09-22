@@ -1,4 +1,4 @@
-import { createObject, saveCountry, getAnyStorage, saveUpcomingMatches, deleteUpcomingMatches, saveFinishedMatches} from "./storage.js";
+import { createObject, saveCountry, getAnyStorage, saveUpcomingMatches, deleteUpcomingMatches, saveFinishedMatches, saveTeamStorages} from "./storage.js";
 import { checkString, checkEmpty } from "./utils.js";
 
 //  Что то получаем
@@ -89,6 +89,7 @@ getContainerNewMatches.addEventListener('click', (e) => {
         deleteUpcomingMatches(matchObject)
         saveFinishedMatches(finishedMatchObject)
         calculateFinishedMatches()
+        addInHistory(team1, team2, score)
     }
 
     if (e.target.classList.contains('match__disagree')) {
@@ -126,18 +127,6 @@ function addCountryOption(country) {
     getSelect.innerHTML += `<option value='${country}'>${country}</option>`
 }
 
-function loadCountries() {
-    const arrayCountries = getAnyStorage('countries')
-
-    if (!(arrayCountries)) {
-        return
-    }
-
-    for (let country of arrayCountries) {
-        getSelect.innerHTML += `<option value='${country}'>${country}</option>`
-    }
-}
-
 function getStorages(string) {
     const availableStorages = ['upcoming', 'finished']
 
@@ -152,6 +141,18 @@ function getStorages(string) {
     }
 
     return storageArray
+}
+
+function loadCountries() {
+    const arrayCountries = getAnyStorage('countries')
+
+    if (!(arrayCountries)) {
+        return
+    }
+
+    for (let country of arrayCountries) {
+        getSelect.innerHTML += `<option value='${country}'>${country}</option>`
+    }
 }
 
 function loadUpcomingMatches() {
@@ -173,6 +174,19 @@ function loadFinishedMatches() {
 
     for (let match of arrayFinished) {
         getContainerOldMatches.innerHTML += 
+            `<div class='match'>
+                <div class='team'>${match.team1}</div>
+                <div class='score'>${match.score}</div>
+                <div class='team'>${match.team2}</div>
+            </div>`
+    }
+}
+
+function loadUpcomingInDashboard() {
+    const getUpcomingMatches = getAnyStorage('upcoming')
+
+    for (let match of getUpcomingMatches) {
+        getFutureMatches.innerHTML += 
             `<div class='match'>
                 <div class='team'>${match.team1}</div>
                 <div class='score'>${match.score}</div>
@@ -217,6 +231,39 @@ function createNewMatches(team1, team2) {
     saveUpcomingMatches(matchObject)
 }
 
+function addInHistory(team1, team2, score) {
+    checkString(team1)
+    checkString(team2)
+    checkString(score)
+
+    const getStorage = getAnyStorage('teams')
+    const getTeam1 = getStorage.find(({ team }) => team1 === team)
+    const getTeam2 = getStorage.find(({ team }) => team2 === team)
+     console.log(getTeam1, getTeam2)
+
+    const findTeam1 = getStorage.findIndex(({ team }) => team1 === team)
+    const findTeam2 = getStorage.findIndex(({ team }) => team2 === team)
+
+    const splitScore = score.split(' ')
+
+    if (splitScore[0] > splitScore[2]) {
+        const forTeam1 = [{match: `${team1} vs ${team2}`, result: 'win', score}]
+        const forTeam2 = [{match: `${team1} vs ${team2}`, result: 'lose', score}]
+        getTeam1.points += 3
+        getTeam1.matches.push(forTeam1)
+        getTeam2.matches.push(forTeam2)
+    } else {
+        const forTeam1 = [{match: `${team1} vs ${team2}`, result: 'lose', score}]
+        const forTeam2 = [{match: `${team1} vs ${team2}`, result: 'win', score}]
+        getTeam2.points += 3
+        getTeam1.matches.push(forTeam1)
+        getTeam2.matches.push(forTeam2)
+    }
+
+    saveTeamStorages(getStorage)
+
+}
+
 //  Функции: Dashboard (калькуляция)
 
 function calculateTeams() {
@@ -250,17 +297,4 @@ function calculateUpcomingMatches() {
     const getUpcomingLength = getUpcoming.length
 
     getBlock.innerHTML = `Кол-во будущих матчей: ${getUpcomingLength}`
-}
-
-function loadUpcomingInDashboard() {
-    const getUpcomingMatches = getAnyStorage('upcoming')
-
-    for (let match of getUpcomingMatches) {
-        getFutureMatches.innerHTML += 
-            `<div class='match'>
-                <div class='team'>${match.team1}</div>
-                <div class='score'>${match.score}</div>
-                <div class='team'>${match.team2}</div>
-            </div>`
-    }
 }
