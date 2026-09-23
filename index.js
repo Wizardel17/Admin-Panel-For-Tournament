@@ -31,7 +31,10 @@ const getTbody = getTable.querySelector('.statistics__table--tbody')
 
 //  Filters
 
-
+const getFilter = document.querySelector('.team__searchDifferent')
+const getCountryFilter = document.querySelector('.team__searchCountry')
+const getSelectCountryFilter = getCountryFilter.querySelector('select')
+const getSelectFilter = getFilter.querySelector('select')
 
 //  Function/storage
 
@@ -121,6 +124,29 @@ getContainerNewMatches.addEventListener('click', (e) => {
     }
 })
 
+getFilter.addEventListener('click', (e) => {
+    const choseFilter = getSelectFilter.value
+
+    if (e.target.tagName === 'BUTTON') {
+       if (choseFilter === 'a-z') {
+            loadABCHigh()
+       } else if (choseFilter === 'z-a') {
+            loadABCLittle()
+       } else if (choseFilter === 'pointsful') {
+            loadHighPointsTable()
+       } else {
+            loadLittlePointsTable()
+       }
+    }
+})
+
+getCountryFilter.addEventListener('click', (e) => {
+    const choseCountry = getSelectCountryFilter.value
+    if (e.target.tagName === 'BUTTON') {
+        loadCountry(choseCountry)
+    }
+})
+
 document.addEventListener('DOMContentLoaded', () => {
     loadCountries()
     loadUpcomingMatches()
@@ -202,6 +228,7 @@ function loadUpcomingInDashboard() {
 
 function loadTable(array) {
     checkArray(array)
+    getTbody.innerHTML = ''
 
     for (let team of array) {
         getTbody.insertAdjacentHTML('beforeend', 
@@ -236,6 +263,15 @@ function loadABCHigh() {
 
 function loadABCLittle() {
     const array = getStorage.sort((a, b) => b.team.localeCompare(a.team))
+
+    loadTable(array)
+}
+
+function loadCountry(string) {
+    checkEmpty(string)
+    checkString(string)
+
+    const array = getStorage.filter(({ country }) => country === string)
 
     loadTable(array)
 }
