@@ -28,6 +28,7 @@ const getContainerOldMatches = getSectionMatches.querySelector('.matches__oldMat
 const getStatistics = document.querySelector('.statistics')
 const getTable = getStatistics.querySelector('.statistics__table')
 const getTbody = getTable.querySelector('.statistics__table--tbody')
+const getStat = getStatistics.querySelector('.statistics__stat')
 
 //  Filters
 
@@ -160,6 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateMatches()
     calculateFinishedMatches()
     calculateUpcomingMatches()
+
+    calculateMoreMatches()
+    calculateWinMatches()
 })
 
 //  Функции
@@ -384,4 +388,36 @@ function calculateUpcomingMatches() {
     const getUpcomingLength = getUpcoming.length
 
     getBlock.innerHTML = `Кол-во будущих матчей: ${getUpcomingLength}`
+}
+
+//  Функции: Statistics (калькуляция)
+
+function calculateMoreMatches() {
+    const getBlock = getStat.querySelector('.statistics__stat__moreMatches')
+    let moreMatches = 0
+    let findTeam = null
+
+    for (let i = 0; i < getStorage.length; i++) {
+        if (getStorage[i].matches.length > moreMatches) {
+            moreMatches = getStorage[i].matches.length
+            findTeam = getStorage[i]
+        }
+    }
+
+    getBlock.innerHTML = `Сыгранно больше всего матчей: ${findTeam.team}`
+}
+
+function calculateWinMatches() {
+    const getBlock = getStat.querySelector('.statistics__stat__moreWin')
+    let winMatches = 0
+    let findTeam = null
+
+    for (let i = 0; i < getStorage.length; i++) {
+        if (getStorage[i].win > winMatches) {
+            winMatches = getStorage[i].matches.length
+            findTeam = getStorage[i]
+        }
+    }
+
+    getBlock.innerHTML = `Выиграно больше всего матчей: ${findTeam.team}`
 }
