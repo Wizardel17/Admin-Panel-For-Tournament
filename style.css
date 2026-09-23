@@ -24,3 +24,16 @@ body {
     flex-direction: row;
     gap: 20px;
 }
+
+table {
+    text-align: center
+}
+
+th {
+    padding: 10px
+}
+
+.statistics__stat {
+    margin-top: 30px;
+    padding: 10px
+}
