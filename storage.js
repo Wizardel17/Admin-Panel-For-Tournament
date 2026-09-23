@@ -14,13 +14,15 @@ export function createObject(team, country) {
         players: 3,
         country,
         points: 0,
-        matches: []
+        matches: [],
+        win: 0,
+        lose: 0
     }
 
     saveStorage(teamObject)
 }
 
-export function saveTeamStorages(array) {
+export function saveTeamStorage(array) {
     checkArray(array)
 
     localStorage.setItem('teams', JSON.stringify(array))
