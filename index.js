@@ -53,6 +53,7 @@ getFormTeam.addEventListener('submit', (e) => {
     createObject(teamName, teamCountry)
     addCountryOption(teamCountry)
     calculateTeams()
+    loadForAdd()
 
     getChildrenForm[0].value = ''
     getChildrenForm[1].value = ''
@@ -113,6 +114,7 @@ getContainerNewMatches.addEventListener('click', (e) => {
         saveFinishedMatches(finishedMatchObject)
         calculateFinishedMatches()
         addInHistory(team1, team2, score)
+        loadHighPointsTable()
     }
 
     if (e.target.classList.contains('match__disagree')) {
@@ -272,6 +274,12 @@ function loadCountry(string) {
     checkString(string)
 
     const array = getStorage.filter(({ country }) => country === string)
+
+    loadTable(array)
+}
+
+function loadForAdd() {
+    const array = getAnyStorage('teams')
 
     loadTable(array)
 }
