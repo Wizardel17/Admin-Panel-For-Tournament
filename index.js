@@ -3,23 +3,39 @@ import { checkString, checkEmpty, checkArray } from "./utils.js";
 
 //  Что то получаем
 
+//  Dashboard
+
 const getDashboard = document.querySelector('.dashboard')
 const getStatisticsDashboard = getDashboard.querySelector('.dashboard__statistics')
 const getFutureMatches = getDashboard.querySelector('.dashboard__futureMatches')
+
+//  Team
 
 const getSectionTeam = document.querySelector('.team')
 const getFormTeam = getSectionTeam.querySelector('.team__createTeam')
 const getSearchCountry = getSectionTeam.querySelector('.team__searchCountry')
 const getSelect = getSearchCountry.querySelector('select')
 
+//  Matches
+
 const getSectionMatches = document.querySelector('.matches')
 const getFormMatches = getSectionMatches.querySelector('.matches__form')
 const getContainerNewMatches = getSectionMatches.querySelector('.matches__newMatches')
 const getContainerOldMatches = getSectionMatches.querySelector('.matches__oldMatches')
 
+//  Statistics
+
 const getStatistics = document.querySelector('.statistics')
 const getTable = getStatistics.querySelector('.statistics__table')
 const getTbody = getTable.querySelector('.statistics__table--tbody')
+
+//  Filters
+
+
+
+//  Function/storage
+
+const getStorage = getAnyStorage('teams')
 
 //  Обработчики событий
 
@@ -201,8 +217,13 @@ function loadTable(array) {
 }
 
 function loadHighPointsTable() {
-    const getStorage = getAnyStorage('teams')
     const array = getStorage.sort((a, b) => b.points - a.points)
+
+    loadTable(array)
+}
+
+function loadLittlePointsTable() {
+    const array = getStorage.sort((a, b) => a.points - b.points)
 
     loadTable(array)
 }
@@ -217,7 +238,6 @@ function createNewMatches(team1, team2) {
         throw Error('The same team!!!')
     }
 
-    const getStorage = getAnyStorage('teams')
     const arrayTeam = getStorage.map(item => item.team)
 
     if (!(arrayTeam.includes(team1))) {
@@ -248,7 +268,6 @@ function addInHistory(team1, team2, score) {
     checkString(team2)
     checkString(score)
 
-    const getStorage = getAnyStorage('teams')
     const getTeam1 = getStorage.find(({ team }) => team1 === team)
     const getTeam2 = getStorage.find(({ team }) => team2 === team)
 
