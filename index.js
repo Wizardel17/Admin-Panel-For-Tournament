@@ -234,6 +234,12 @@ function loadABCHigh() {
     loadTable(array)
 }
 
+function loadABCLittle() {
+    const array = getStorage.sort((a, b) => b.team.localeCompare(a.team))
+
+    loadTable(array)
+}
+
 function createNewMatches(team1, team2) {
     checkEmpty(team1)
     checkEmpty(team2)
