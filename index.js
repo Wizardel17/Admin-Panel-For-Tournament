@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     calculateMoreMatches()
     calculateWinMatches()
+    calculateLoseMatches()
 })
 
 //  Функции
@@ -420,4 +421,19 @@ function calculateWinMatches() {
     }
 
     getBlock.innerHTML = `Выиграно больше всего матчей: ${findTeam.team}`
+}
+
+function calculateLoseMatches() {
+    const getBlock = getStat.querySelector('.statistics__stat__moreLose')
+    let loseMatches = 0
+    let findTeam = null
+
+    for (let i = 0; i < getStorage.length; i++) {
+        if (getStorage[i].lose > loseMatches) {
+            loseMatches = getStorage[i].matches.length
+            findTeam = getStorage[i]
+        }
+    }
+
+    getBlock.innerHTML = `Проиграно больше всего матчей: ${findTeam.team}`
 }
