@@ -228,6 +228,12 @@ function loadLittlePointsTable() {
     loadTable(array)
 }
 
+function loadABCHigh() {
+    const array = getStorage.sort((a, b) => a.team.localeCompare(b.team))
+
+    loadTable(array)
+}
+
 function createNewMatches(team1, team2) {
     checkEmpty(team1)
     checkEmpty(team2)
