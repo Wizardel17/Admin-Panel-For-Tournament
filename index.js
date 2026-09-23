@@ -1,10 +1,10 @@
-import { createObject, saveCountry, getAnyStorage, saveUpcomingMatches, deleteUpcomingMatches, saveFinishedMatches, saveTeamStorages} from "./storage.js";
-import { checkString, checkEmpty } from "./utils.js";
+import { createObject, saveCountry, getAnyStorage, saveUpcomingMatches, deleteUpcomingMatches, saveFinishedMatches, saveTeamStorage} from "./storage.js";
+import { checkString, checkEmpty, checkArray } from "./utils.js";
 
 //  Что то получаем
 
 const getDashboard = document.querySelector('.dashboard')
-const getStatistics = getDashboard.querySelector('.dashboard__statistics')
+const getStatisticsDashboard = getDashboard.querySelector('.dashboard__statistics')
 const getFutureMatches = getDashboard.querySelector('.dashboard__futureMatches')
 
 const getSectionTeam = document.querySelector('.team')
@@ -16,6 +16,10 @@ const getSectionMatches = document.querySelector('.matches')
 const getFormMatches = getSectionMatches.querySelector('.matches__form')
 const getContainerNewMatches = getSectionMatches.querySelector('.matches__newMatches')
 const getContainerOldMatches = getSectionMatches.querySelector('.matches__oldMatches')
+
+const getStatistics = document.querySelector('.statistics')
+const getTable = getStatistics.querySelector('.statistics__table')
+const getTbody = getTable.querySelector('.statistics__table--tbody')
 
 //  Обработчики событий
 
@@ -106,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadUpcomingMatches()
     loadFinishedMatches()
     loadUpcomingInDashboard()
+    loadHighPointsTable()
 
     calculateTeams()
     calculateMatches()
@@ -127,22 +132,6 @@ function addCountryOption(country) {
     getSelect.innerHTML += `<option value='${country}'>${country}</option>`
 }
 
-function getStorages(string) {
-    const availableStorages = ['upcoming', 'finished']
-
-    if (!(availableStorages.includes(string))) {
-        throw Error('Storage blocked')
-    }
-    
-    const storageArray = getAnyStorage(string)
-
-    if (!(storageArray)) {
-        return
-    }
-
-    return storageArray
-}
-
 function loadCountries() {
     const arrayCountries = getAnyStorage('countries')
 
@@ -156,7 +145,7 @@ function loadCountries() {
 }
 
 function loadUpcomingMatches() {
-    const arrayUpcoming = getStorages('upcoming')
+    const arrayUpcoming = getAnyStorage('upcoming')
 
     for (let match of arrayUpcoming) {
         getContainerNewMatches.innerHTML += 
@@ -170,7 +159,7 @@ function loadUpcomingMatches() {
 }
 
 function loadFinishedMatches() {
-    const arrayFinished = getStorages('finished')
+    const arrayFinished = getAnyStorage('finished')
 
     for (let match of arrayFinished) {
         getContainerOldMatches.innerHTML += 
@@ -193,6 +182,29 @@ function loadUpcomingInDashboard() {
                 <div class='team'>${match.team2}</div>
             </div>`
     }
+}
+
+function loadTable(array) {
+    checkArray(array)
+
+    for (let team of array) {
+        getTbody.insertAdjacentHTML('beforeend', 
+            `<tr>
+                <td>${team.team}</td>
+                <td>${team.players}</td>
+                <td>${team.country}</td>
+                <td>${team.win}</td>
+                <td>${team.lose}</td>
+                <td>${team.points}</td>
+            </tr>`)
+    }
+}
+
+function loadHighPointsTable() {
+    const getStorage = getAnyStorage('teams')
+    const array = getStorage.sort((a, b) => b.points - a.points)
+
+    loadTable(array)
 }
 
 function createNewMatches(team1, team2) {
@@ -239,10 +251,6 @@ function addInHistory(team1, team2, score) {
     const getStorage = getAnyStorage('teams')
     const getTeam1 = getStorage.find(({ team }) => team1 === team)
     const getTeam2 = getStorage.find(({ team }) => team2 === team)
-     console.log(getTeam1, getTeam2)
-
-    const findTeam1 = getStorage.findIndex(({ team }) => team1 === team)
-    const findTeam2 = getStorage.findIndex(({ team }) => team2 === team)
 
     const splitScore = score.split(' ')
 
@@ -250,24 +258,28 @@ function addInHistory(team1, team2, score) {
         const forTeam1 = [{match: `${team1} vs ${team2}`, result: 'win', score}]
         const forTeam2 = [{match: `${team1} vs ${team2}`, result: 'lose', score}]
         getTeam1.points += 3
+        getTeam1.win += 1
+        getTeam2.lose += 1
         getTeam1.matches.push(forTeam1)
         getTeam2.matches.push(forTeam2)
     } else {
         const forTeam1 = [{match: `${team1} vs ${team2}`, result: 'lose', score}]
         const forTeam2 = [{match: `${team1} vs ${team2}`, result: 'win', score}]
         getTeam2.points += 3
+        getTeam2.win += 1
+        getTeam1.lose += 1
         getTeam1.matches.push(forTeam1)
         getTeam2.matches.push(forTeam2)
     }
 
-    saveTeamStorages(getStorage)
+    saveTeamStorage(getStorage)
 
 }
 
 //  Функции: Dashboard (калькуляция)
 
 function calculateTeams() {
-    const getBlock = getStatistics.querySelector('.dashboard__statistics__teams')
+    const getBlock = getStatisticsDashboard.querySelector('.dashboard__statistics__teams')
     const getTeams = getAnyStorage('teams')
     const getTeamsLength = getTeams.length
 
@@ -275,7 +287,7 @@ function calculateTeams() {
 }
 
 function calculateMatches() {
-    const getBlock = getStatistics.querySelector('.dashboard__statistics__allMatches')
+    const getBlock = getStatisticsDashboard.querySelector('.dashboard__statistics__allMatches')
     const getUpcoming = getAnyStorage('upcoming')
     const getFinished = getAnyStorage('finished')
     const getMatchesLength = getUpcoming.length + getFinished.length
@@ -284,7 +296,7 @@ function calculateMatches() {
 }
 
 function calculateFinishedMatches() {
-    const getBlock = getStatistics.querySelector('.dashboard__statistics__finishedMatches')
+    const getBlock = getStatisticsDashboard.querySelector('.dashboard__statistics__finishedMatches')
     const getFinished = getAnyStorage('finished')
     const getFinishedLength = getFinished.length
 
@@ -292,7 +304,7 @@ function calculateFinishedMatches() {
 }
 
 function calculateUpcomingMatches() {
-    const getBlock = getStatistics.querySelector('.dashboard__statistics__futureMatches')
+    const getBlock = getStatisticsDashboard.querySelector('.dashboard__statistics__futureMatches')
     const getUpcoming = getAnyStorage('upcoming')
     const getUpcomingLength = getUpcoming.length
 
