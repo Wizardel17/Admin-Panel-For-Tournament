@@ -1,4 +1,4 @@
-import { createObject, saveCountry, getAnyStorage, saveUpcomingMatches, deleteUpcomingMatches, saveFinishedMatches, saveTeamStorage} from "./storage.js";
+import { createObject, saveCountry, getAnyStorage, saveMatches, deleteUpcomingMatches, saveTeamStorage} from "./storage.js";
 import { checkString, checkEmpty, checkArray } from "./utils.js";
 
 //  Что то получаем
@@ -37,6 +37,14 @@ const getSelectCountryFilter = getCountryFilter.querySelector('select')
 const getSelectFilter = getFilter.querySelector('select')
 
 //  Function/storage/Variables
+
+function checkSection(section) {
+    if (!(arrayAvailableSection.includes(section))) {
+        throw Error('Bad parameter')
+    }
+
+    return section
+}
 
 const getStorage = getAnyStorage('teams')
 const arrayAvailableSection = ['dashboard', 'statistics']
@@ -112,11 +120,14 @@ getContainerNewMatches.addEventListener('click', (e) => {
 
         getContainerOldMatches.append(findParent)
         deleteUpcomingMatches(matchObject)
-        saveFinishedMatches(finishedMatchObject)
+        saveMatches(finishedMatchObject, 'finished')
         updateCalculateUpcomingMatches()
         calculateFinishedMatches('statistics')
         addInHistory(team1, team2, score)
         loadHighPointsTable()
+        calculateMoreMatches()
+        calculateWinMatches()
+        calculateLoseMatches()
     }
 
     if (e.target.classList.contains('match__disagree')) {
@@ -167,9 +178,12 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateMatches('statistics')
     calculateFinishedMatches('statistics')
     calculateUpcomingMatches('statistics')
-    calculateMoreMatches()
-    calculateWinMatches()
-    calculateLoseMatches()
+
+    if (getStorage.length !== 0) {
+        calculateMoreMatches()
+        calculateWinMatches()
+        calculateLoseMatches()
+    }
 })
 
 //  Функции
@@ -185,6 +199,8 @@ function addCountryOption(country) {
 
     getSelect.innerHTML += `<option value='${country}'>${country}</option>`
 }
+
+//  Функции: Загрузки
 
 function loadCountries() {
     const arrayCountries = getAnyStorage('countries')
@@ -240,6 +256,7 @@ function loadUpcomingInDashboard() {
 
 function loadTable(array) {
     checkArray(array)
+
     getTbody.innerHTML = ''
 
     for (let team of array) {
@@ -256,25 +273,33 @@ function loadTable(array) {
 }
 
 function loadHighPointsTable() {
-    const array = getStorage.sort((a, b) => b.points - a.points)
+    const getStorageTeams = getAnyStorage('teams')
+
+    const array = getStorageTeams.sort((a, b) => b.points - a.points)
 
     loadTable(array)
 }
 
 function loadLittlePointsTable() {
-    const array = getStorage.sort((a, b) => a.points - b.points)
+    const getStorageTeams = getAnyStorage('teams')
+
+    const array = getStorageTeams.sort((a, b) => a.points - b.points)
 
     loadTable(array)
 }
 
 function loadABCHigh() {
-    const array = getStorage.sort((a, b) => a.team.localeCompare(b.team))
+    const getStorageTeams = getAnyStorage('teams')
+
+    const array = getStorageTeams.sort((a, b) => a.team.localeCompare(b.team))
 
     loadTable(array)
 }
 
 function loadABCLittle() {
-    const array = getStorage.sort((a, b) => b.team.localeCompare(a.team))
+    const getStorageTeams = getAnyStorage('teams')
+
+    const array = getStorageTeams.sort((a, b) => b.team.localeCompare(a.team))
 
     loadTable(array)
 }
@@ -283,7 +308,8 @@ function loadCountry(string) {
     checkEmpty(string)
     checkString(string)
 
-    const array = getStorage.filter(({ country }) => country === string)
+    const getStorageTeams = getAnyStorage('teams')
+    const array = getStorageTeams.filter(({ country }) => country === string)
 
     loadTable(array)
 }
@@ -293,6 +319,8 @@ function loadForAdd() {
 
     loadTable(array)
 }
+
+//  Функции: Связанное с локалстораж и остальным
 
 function createNewMatches(team1, team2) {
     checkEmpty(team1)
@@ -304,7 +332,8 @@ function createNewMatches(team1, team2) {
         throw Error('The same team!!!')
     }
 
-    const arrayTeam = getStorage.map(item => item.team)
+    const getStorageTeams = getAnyStorage('teams')
+    const arrayTeam = getStorageTeams.map(item => item.team)
 
     if (!(arrayTeam.includes(team1))) {
         throw Error(`${team1} absents in the storage`)
@@ -326,16 +355,20 @@ function createNewMatches(team1, team2) {
             <button class='match__button'>Выставить счет</button>
         </div>`
 
-    saveUpcomingMatches(matchObject)
+    saveMatches(matchObject, 'upcoming')
 }
 
 function addInHistory(team1, team2, score) {
     checkString(team1)
     checkString(team2)
     checkString(score)
+    checkEmpty(team1)
+    checkEmpty(team2)
+    checkEmpty(score)
 
-    const getTeam1 = getStorage.find(({ team }) => team1 === team)
-    const getTeam2 = getStorage.find(({ team }) => team2 === team)
+    const getStorageTeams = getAnyStorage('teams')
+    const getTeam1 = getStorageTeams.find(({ team }) => team1 === team)
+    const getTeam2 = getStorageTeams.find(({ team }) => team2 === team)
 
     const splitScore = score.split(' ')
 
@@ -357,16 +390,8 @@ function addInHistory(team1, team2, score) {
         getTeam2.matches.push(forTeam2)
     }
 
-    saveTeamStorage(getStorage)
+    saveTeamStorage(getStorageTeams)
 
-}
-
-function checkSection(section) {
-    if (!(arrayAvailableSection.includes(section))) {
-        throw Error('Bad parameter')
-    }
-
-    return section
 }
 
 //  Функции: Dashboard + Statistics (калькуляция)
@@ -420,13 +445,14 @@ function updateCalculateUpcomingMatches() {
 
 function calculateMoreMatches() {
     const getBlock = getStat.querySelector('.statistics__stat__moreMatches')
-    let moreMatches = 0
+    const getStorageTeams = getAnyStorage('teams')
+    let moreMatches = -1
     let findTeam = null
 
-    for (let i = 0; i < getStorage.length; i++) {
-        if (getStorage[i].matches.length > moreMatches) {
-            moreMatches = getStorage[i].matches.length
-            findTeam = getStorage[i]
+    for (let i = 0; i < getStorageTeams.length; i++) {
+        if (getStorageTeams[i].matches.length > moreMatches) {
+            moreMatches = getStorageTeams[i].matches.length
+            findTeam = getStorageTeams[i]
         }
     }
 
@@ -435,13 +461,14 @@ function calculateMoreMatches() {
 
 function calculateWinMatches() {
     const getBlock = getStat.querySelector('.statistics__stat__moreWin')
-    let winMatches = 0
+    const getStorageTeams = getAnyStorage('teams')
+    let winMatches = -1
     let findTeam = null
 
-    for (let i = 0; i < getStorage.length; i++) {
-        if (getStorage[i].win > winMatches) {
-            winMatches = getStorage[i].matches.length
-            findTeam = getStorage[i]
+    for (let i = 0; i < getStorageTeams.length; i++) {
+        if (getStorageTeams[i].win > winMatches) {
+            winMatches = getStorageTeams[i].win
+            findTeam = getStorageTeams[i]
         }
     }
 
@@ -450,13 +477,14 @@ function calculateWinMatches() {
 
 function calculateLoseMatches() {
     const getBlock = getStat.querySelector('.statistics__stat__moreLose')
-    let loseMatches = 0
+    const getStorageTeams = getAnyStorage('teams')
+    let loseMatches = -1
     let findTeam = null
 
-    for (let i = 0; i < getStorage.length; i++) {
-        if (getStorage[i].lose > loseMatches) {
-            loseMatches = getStorage[i].matches.length
-            findTeam = getStorage[i]
+    for (let i = 0; i < getStorageTeams.length; i++) {
+        if (getStorageTeams[i].lose > loseMatches) {
+            loseMatches = getStorageTeams[i].lose
+            findTeam = getStorageTeams[i]
         }
     }
 
