@@ -6,7 +6,6 @@ import { checkString, checkEmpty, checkArray } from "./utils.js";
 //  Dashboard
 
 const getDashboard = document.querySelector('.dashboard')
-const getStatisticsDashboard = getDashboard.querySelector('.dashboard__statistics')
 const getFutureMatches = getDashboard.querySelector('.dashboard__futureMatches')
 
 //  Team
@@ -37,9 +36,10 @@ const getCountryFilter = document.querySelector('.team__searchCountry')
 const getSelectCountryFilter = getCountryFilter.querySelector('select')
 const getSelectFilter = getFilter.querySelector('select')
 
-//  Function/storage
+//  Function/storage/Variables
 
 const getStorage = getAnyStorage('teams')
+const arrayAvailableSection = ['dashboard', 'statistics']
 
 //  Обработчики событий
 
@@ -157,11 +157,15 @@ document.addEventListener('DOMContentLoaded', () => {
     loadUpcomingInDashboard()
     loadHighPointsTable()
 
-    calculateTeams()
-    calculateMatches()
-    calculateFinishedMatches()
-    calculateUpcomingMatches()
+    calculateTeams('dashboard')
+    calculateMatches('dashboard')
+    calculateFinishedMatches('dashboard')
+    calculateUpcomingMatches('dashboard')
 
+    calculateTeams('statistics')
+    calculateMatches('statistics')
+    calculateFinishedMatches('statistics')
+    calculateUpcomingMatches('statistics')
     calculateMoreMatches()
     calculateWinMatches()
     calculateLoseMatches()
@@ -356,18 +360,28 @@ function addInHistory(team1, team2, score) {
 
 }
 
-//  Функции: Dashboard (калькуляция)
+function checkSection(section) {
+    if (!(arrayAvailableSection.includes(section))) {
+        throw Error('Bad parameter')
+    }
 
-function calculateTeams() {
-    const getBlock = getStatisticsDashboard.querySelector('.dashboard__statistics__teams')
+    return section
+}
+
+//  Функции: Dashboard + Statistics (калькуляция)
+
+function calculateTeams(section) {
+    const getSection = checkSection(section)
+    const getBlock = document.querySelector(`.${getSection}__stat__teams`)
     const getTeams = getAnyStorage('teams')
     const getTeamsLength = getTeams.length
 
     getBlock.innerHTML = `Общее кол-во команд: ${getTeamsLength}`
 }
 
-function calculateMatches() {
-    const getBlock = getStatisticsDashboard.querySelector('.dashboard__statistics__allMatches')
+function calculateMatches(section) {
+    const getSection = checkSection(section)
+    const getBlock = document.querySelector(`.${getSection}__stat__allMatches`)
     const getUpcoming = getAnyStorage('upcoming')
     const getFinished = getAnyStorage('finished')
     const getMatchesLength = getUpcoming.length + getFinished.length
@@ -375,16 +389,18 @@ function calculateMatches() {
     getBlock.innerHTML = `Общее кол-во матчей: ${getMatchesLength}`
 }
 
-function calculateFinishedMatches() {
-    const getBlock = getStatisticsDashboard.querySelector('.dashboard__statistics__finishedMatches')
+function calculateFinishedMatches(section) {
+    const getSection = checkSection(section)
+    const getBlock = document.querySelector(`.${getSection}__stat__finishedMatches`)
     const getFinished = getAnyStorage('finished')
     const getFinishedLength = getFinished.length
 
     getBlock.innerHTML = `Кол-во законченных матчей: ${getFinishedLength}`
 }
 
-function calculateUpcomingMatches() {
-    const getBlock = getStatisticsDashboard.querySelector('.dashboard__statistics__futureMatches')
+function calculateUpcomingMatches(section) {
+    const getSection = checkSection(section)
+    const getBlock = document.querySelector(`.${getSection}__stat__futureMatches`)
     const getUpcoming = getAnyStorage('upcoming')
     const getUpcomingLength = getUpcoming.length
 
