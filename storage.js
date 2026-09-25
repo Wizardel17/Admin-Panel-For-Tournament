@@ -58,22 +58,19 @@ export function saveCountry(country) {
     }
 }
 
-export function saveUpcomingMatches(object) {
+export function saveMatches(object, string) {
+    const availlableStorage = ['upcoming', 'finished']
+
+    if (!(availlableStorage.includes(string))) {
+        throw Error(`${string} doesn't work`)
+    }
+
     checkObject(object)
 
-    let getStorage = JSON.parse(localStorage.getItem('upcoming')) || []
+    let getStorage = JSON.parse(localStorage.getItem(string)) || []
 
     getStorage.unshift(object)
-    localStorage.setItem('upcoming', JSON.stringify(getStorage))
-}
-
-export function saveFinishedMatches(object) {
-    checkObject(object)
-
-    let getStorage = JSON.parse(localStorage.getItem('finished')) || []
-
-    getStorage.unshift(object)
-    localStorage.setItem('finished', JSON.stringify(getStorage))
+    localStorage.setItem(string, JSON.stringify(getStorage))
 }
 
 export function getAnyStorage(string) {
