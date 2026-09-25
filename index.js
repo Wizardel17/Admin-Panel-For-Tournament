@@ -53,7 +53,7 @@ getFormTeam.addEventListener('submit', (e) => {
 
     createObject(teamName, teamCountry)
     addCountryOption(teamCountry)
-    calculateTeams()
+    calculateTeams('statistics')
     loadForAdd()
 
     getChildrenForm[0].value = ''
@@ -69,8 +69,8 @@ getFormMatches.addEventListener('submit', (e) => {
     const teamName2 = getChildrenForm[1].value.toUpperCase().trim()
 
     createNewMatches(teamName1, teamName2)
-    calculateUpcomingMatches()
-    calculateMatches()
+    calculateUpcomingMatches('statistics')
+    calculateMatches('statistics')
 
     getChildrenForm[0].value = ''
     getChildrenForm[1].value = ''
@@ -113,7 +113,8 @@ getContainerNewMatches.addEventListener('click', (e) => {
         getContainerOldMatches.append(findParent)
         deleteUpcomingMatches(matchObject)
         saveFinishedMatches(finishedMatchObject)
-        calculateFinishedMatches()
+        updateCalculateUpcomingMatches()
+        calculateFinishedMatches('statistics')
         addInHistory(team1, team2, score)
         loadHighPointsTable()
     }
@@ -401,6 +402,14 @@ function calculateFinishedMatches(section) {
 function calculateUpcomingMatches(section) {
     const getSection = checkSection(section)
     const getBlock = document.querySelector(`.${getSection}__stat__futureMatches`)
+    const getUpcoming = getAnyStorage('upcoming')
+    const getUpcomingLength = getUpcoming.length
+
+    getBlock.innerHTML = `Кол-во будущих матчей: ${getUpcomingLength}`
+}
+
+function updateCalculateUpcomingMatches() {
+    const getBlock = document.querySelector(`.statistics__stat__futureMatches`)
     const getUpcoming = getAnyStorage('upcoming')
     const getUpcomingLength = getUpcoming.length
 
