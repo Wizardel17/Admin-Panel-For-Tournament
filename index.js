@@ -275,7 +275,7 @@ function loadTable(array) {
 function loadHighPointsTable() {
     const getStorageTeams = getAnyStorage('teams')
 
-    const array = getStorageTeams.sort((a, b) => b.points - a.points)
+    const array = [...getStorageTeams].sort((a, b) => b.points - a.points)
 
     loadTable(array)
 }
@@ -283,7 +283,7 @@ function loadHighPointsTable() {
 function loadLittlePointsTable() {
     const getStorageTeams = getAnyStorage('teams')
 
-    const array = getStorageTeams.sort((a, b) => a.points - b.points)
+    const array = [...getStorageTeams].sort((a, b) => a.points - b.points)
 
     loadTable(array)
 }
@@ -291,7 +291,7 @@ function loadLittlePointsTable() {
 function loadABCHigh() {
     const getStorageTeams = getAnyStorage('teams')
 
-    const array = getStorageTeams.sort((a, b) => a.team.localeCompare(b.team))
+    const array = [...getStorageTeams].sort((a, b) => a.team.localeCompare(b.team))
 
     loadTable(array)
 }
@@ -299,7 +299,7 @@ function loadABCHigh() {
 function loadABCLittle() {
     const getStorageTeams = getAnyStorage('teams')
 
-    const array = getStorageTeams.sort((a, b) => b.team.localeCompare(a.team))
+    const array = [...getStorageTeams].sort((a, b) => b.team.localeCompare(a.team))
 
     loadTable(array)
 }
@@ -373,8 +373,8 @@ function addInHistory(team1, team2, score) {
     const splitScore = score.split(' ')
 
     if (splitScore[0] > splitScore[2]) {
-        const forTeam1 = [{match: `${team1} vs ${team2}`, result: 'win', score}]
-        const forTeam2 = [{match: `${team1} vs ${team2}`, result: 'lose', score}]
+        const forTeam1 = {match: `${team1} vs ${team2}`, result: 'win', score}
+        const forTeam2 = {match: `${team1} vs ${team2}`, result: 'lose', score}
         getTeam1.points += 3
         getTeam1.win += 1
         getTeam2.lose += 1

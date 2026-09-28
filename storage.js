@@ -96,6 +96,10 @@ export function deleteUpcomingMatches(array) {
     const findTeams = getStorage.map(item => [item.team1, item.team2])
     const index = findTeams.findIndex(team => team[0] === array[0] && team[1] === array[1])
 
+    if (index === -1) {
+        throw Error('Match is bad')
+    }
+
     getStorage.splice(index, 1)
     
     localStorage.setItem('upcoming', JSON.stringify(getStorage))
